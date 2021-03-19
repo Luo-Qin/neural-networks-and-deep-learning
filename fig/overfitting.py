@@ -157,6 +157,7 @@ def plot_overlay(test_accuracy, training_accuracy, num_epochs, xmin,
     ax.set_ylim([90, 100])
     plt.legend(loc="lower right")
     plt.show()
+    plt.savefig("Accuracy-on-the-training-data")
 
 if __name__ == "__main__":
     filename = input("Enter a file name: ")
