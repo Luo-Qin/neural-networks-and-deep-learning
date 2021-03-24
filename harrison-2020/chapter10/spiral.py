@@ -5,6 +5,9 @@ import Layer_Dense as ld
 import Activation_ReLU as ReLU
 import Activation_Softmax_Loss as ASL
 import Optimizer_SGD as SGD
+import Optimizer_Adagrad as Adagrad
+import Optimizer_RMSprop as RMSprop
+import Optimizer_Adam as Adam
 
 nnfs.init()
 
@@ -29,7 +32,10 @@ dense2 = ld.Layer_Dense(64, 3)
 loss_activation = ASL.Activation_Softmax_Loss_CategoricalCrossentropy()
 
 # create optimizer
-optimizer = SGD.Optimizer_SGD()
+#optimizer = SGD.Optimizer_SGD(decay=1e-3, momentum=0.9)
+#optimizer = Adagrad.Optimizer_Adagrad(decay=1e-4)
+#optimizer = RMSprop.Optimizer_RMSprop(learning_rate=0.02, decay=1e-5, rho=0.999)
+optimizer = Adam.Optimizer_Adam(learning_rate=0.02, decay=1e-5)
 
 # train in loop
 for epoch in range(10001):
@@ -59,7 +65,8 @@ for epoch in range(10001):
     if not epoch % 100:
         print(f'epoch: {epoch}, ', \
               f'acc: {accuracy:.3f}, ' \
-              f'loss: {loss:.3f}')
+              f'loss: {loss:.3f}, ' \
+              f'lr: {optimizer.current_learning_rate}')
 
     # backward pass
     loss_activation.backward(loss_activation.output, y)
@@ -68,6 +75,8 @@ for epoch in range(10001):
     dense1.backward(activation1.dinputs)
 
     # update weights and biases
+    optimizer.pre_update_params()
     optimizer.update_params(dense1)
     optimizer.update_params(dense2)
+    optimizer.post_update_params()
 
